@@ -1,0 +1,85 @@
+#NAME:      MUJTABA WAHEED
+#STUDENT#   500900260
+=________________________________________
+#Making the picture of TINY WALDO
+tinywaldo = makePicture('C:/Users/AA/Desktop/waldo.jpg')
+#Making the picture of TINY SCENE
+tinyscene = makePicture('C:/Users/AA/Desktop/scene.jpg')
+#________________________________________
+#Getting the dimensions of tinyWaldo and tinyScene
+#For tinyWaldo
+twH = getHeight(tinywaldo)#Gets the height of tinywaldo
+twW = getWidth(tinywaldo) #Gets the width of tinywaldo
+#For tinyScene
+tsH = getHeight(tinyscene)-twH+1 #Gets the height of tinyscene
+tsW = getWidth(tinyscene)-twW+1 #Gets the Width of tinyscene
+#________________________________________
+#PART 1
+#This function matches the template with the search image.
+def compareOne(template, searchImage, x1, y1):
+#WHERE:
+#x1 is the starting X position of searchImage
+#y1 is the staring Y positon of searchImage
+#template is the template Image
+#searchImage is the image that is being searched to find waldo
+  sum = 0 #is the integer value, which is the sum  of the differences in luminance, given out as an absolute value.
+  for x in range(twW):
+    for y in range(twH):
+      sum = sum + (abs(getRed(getPixel(template, x, y)) - getRed(getPixel(searchImage, x+x1, y+y1))))
+  return sum
+#________________________________________
+#PART 2
+#This function returns a 2D array containing the computed template match scores for all of the positions in the searchImage.
+def compareAll(template, searchImage):
+  matrix = [[i for i in range(tsW)] for j in range(tsH)]
+  #Matrix(2D array), contains all the position coordinates for output
+  for y2 in range(0, tsH): #This nested loop runs for every element of martix while using the compareOne function
+    for x2 in range(tsW): #to compute the Absolute value of their positions.
+      matrix[y2][x2] = compareOne(template, searchImage, x2, y2)
+      return matrix
+#________________________________________
+#PART 3
+#This function  returns the coordinates (minrow, mincol) of the position in
+#array matrix where the value is minimum. 
+def find2Dmin(matrix):
+  min = matrix[0][0] #This initializes value which holds the minimum value.
+  minrow = 0 # X coordinate of minimum value
+  mincol = 0 # Y coordinate of minimum value
+  for x3 in range(tsW): # This nested for loop runs to compare all the minimum values until that element
+    for y3 in range(tsH): #and changes the min value while running the loop
+      if matrix[y3][x3] < min:
+        min = matrix[y3][x3]
+        minrow = x3
+        mincol = y3
+        return (minrow, mincol) #FINALLY minimum row and column is returned
+  
+#________________________________________
+#PART 4
+# This function  that takes as parameters the search image, the position of the target 
+#(x1, y1), the width and height of the target (w1, h1), and a color. 
+def displayMatch(searchImage, x4, y4, w1, h1, color):
+  addRect(searchImage, x4, y4, w1, h1, red)
+  #This variable adds a rectange alround the target image, which is WALDO in our case.
+#________________________________________
+#PART 5
+#This function converts the picture into a grayScale picture.
+def grayScale(picture):
+  pixels = getPixels(picture)
+  for p in pixels:
+    color = (getRed(p) + getGreen(p) + getBlue(p))/3
+    setColor(p, makeColor(color, color, color))
+  return picture #Returns the grayScaled picture.
+#________________________________________
+#Part 6
+#This function takes in the images and calls the other functions to end up showing the match.
+def findWaldo(targetJPG, searchJPG): #COMBINATION OF FIRST FIVE FUNCTIONS
+  template = grayScale(targetJPG)
+  searchImage = grayScale(searchJPG)
+  x5, y5 = find2Dmin(compareAll(template, searchImage))
+  displayMatch(searchImage, x5, y5, twW, twH, red)
+  show(searchImage)
+
+
+findWaldo(tinywaldo, tinyscene)
+
+
